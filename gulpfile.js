@@ -11,7 +11,6 @@ const pkg = require('./package.json');
 const spa = require("gulp-spa");
 //var rev = require('gulp-rev');
 var htmlmin = require('gulp-htmlmin');
-var gulpCopy = require('gulp-copy');
 var uglify = require('gulp-uglify');
 var minifyCss = require('gulp-minify-css');
 var concat = require('gulp-concat');
@@ -46,7 +45,7 @@ gulp.task("html", function () {
  
                 js: function (files) {
                     return files
-                        .pipe(uglify())
+                        //.pipe(uglify())
                         .pipe(concat("app.js"));
                 },
  
