@@ -8,6 +8,13 @@ const runSequence = require('run-sequence');
 const liveServer = require('gulp-live-server');
 const TinyShipyardClient = require('tiny-shipyard-client');
 const pkg = require('./package.json');
+const spa = require("gulp-spa");
+//var rev = require('gulp-rev');
+var htmlmin = require('gulp-htmlmin');
+var uglify = require('gulp-uglify');
+var minifyCss = require('gulp-minify-css');
+var concat = require('gulp-concat');
+
 
 const args = minimist(process.argv.slice(2), { string: ['tag'] });
 const options = {
@@ -21,6 +28,32 @@ const options = {
 }
 
 let server;
+
+gulp.task("html", function () {
+    return gulp.src("./spa/index.html")
+        .pipe(spa.html({
+            assetsDir: "./spa",
+            pipelines: {
+                main: function (files) {
+                    // this gets applied for the HTML file itself 
+                    return files.pipe(htmlmin());
+                },
+ 
+                js: function (files) {
+                    return files
+                        .pipe(uglify())
+                        .pipe(concat("app.js"));
+                },
+ 
+                css: function (files) {
+                    return files
+                        .pipe(minifyCss())
+                        .pipe(concat("app.css"));
+                }
+            }
+        }))
+        .pipe(gulp.dest("./public/"));
+});
 
 gulp.task('test', function (done) {
   done(); // Nothing here yet ;-)

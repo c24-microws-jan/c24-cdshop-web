@@ -1,0 +1,1 @@
+"use strict";var cdApp=angular.module("cdapp",[]);cdApp.config(["$routeProvider",function(t){t.when("/list",{templateUrl:"templates/list.html",controller:"ListController"}).otherwise({redirectTo:"/list"})}]),cdApp.controller("ListController",function(t){});
