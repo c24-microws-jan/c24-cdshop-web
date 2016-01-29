@@ -16,6 +16,9 @@
                         <a href="/#/list">Home</a>
                     </li>     
                     <li>
+                        <a href="/#/search">Search</a>
+                    </li> 
+                    <li>
                         <a href="/#/cart">Cart</a>
                     </li>
                 </ul>
@@ -23,11 +26,15 @@
         </div>
     </div>
 
+    <div class="SmallCoverImage cover">
+        <div class="SmallCoverImage-image cover-image" style="background-image : url('https://i.ytimg.com/vi/PmuIhhyxhko/maxresdefault.jpg')"></div>
+    </div>
+
     <div class="section">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>You have {{cds.length}} items in your cart<a href="/#/checkout" class="pull-right btn btn-lg btn-primary">Buy {{cds.length}} items</a></h1>
+                    <h1>You have {{cdsInCart.length}} items in your cart<a href="/#/checkout" ng-show="cdsInCart.length > 0" class="pull-right btn btn-lg btn-primary">Buy {{cdsInCart.length}} items</a></h1>
                 </div>
             </div>
         </div>
@@ -35,7 +42,7 @@
     <div class="section">
         <div class="container">
             <div class="row">
-				<div class="col-md-4" ng-repeat="cd in cds track by cd.id">
+				<div class="col-md-4" ng-repeat="cd in cdsInCart track by cd.id">
 					<div class="SmallProduct">
 						<img class="SmallProduct-image" ng-src="{{cd.cover.small}}">							
 						<h3 class="SmallProduct-title">{{cd.title}}</h3>

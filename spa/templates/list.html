@@ -14,11 +14,11 @@
 
 			<div class="CustomSearchInput">
                 <div class="input-group col-md-12">
-                    <input type="text" class="CustomSearchInput-input search-query form-control input-lg" placeholder="Search" />
+                    <input ng-model="searchText" type="text" class="CustomSearchInput-input search-query form-control input-lg" placeholder="Search" />
                     <span class="input-group-btn">
-                        <button class="CustomSearchInput-button btn btn-lg btn-primary" type="button">
+                        <a ng-href="/#/search/{{searchText}}" class="CustomSearchInput-button btn btn-lg btn-primary" type="button">
                             <span class="fa fa-search fa-fw"></span>
-                        </button>
+                        </a>
                     </span>
                 </div>
             </div>
