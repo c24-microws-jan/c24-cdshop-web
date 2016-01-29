@@ -1,13 +1,14 @@
 'use strict';
 
+var currentCartId = undefined;
 
 var cdApp = angular.module('cdapp', [
   'ngRoute',
   'ngStorage'
   ]);
   
-cdApp .config(['$routeProvider',
-  function($routeProvider) {
+cdApp.config(['$routeProvider',
+  function($routeProvider, cartService) {
     $routeProvider.
       when('/list', {
         templateUrl: 'templates/list.html',
@@ -41,6 +42,12 @@ cdApp .config(['$routeProvider',
 cdApp.controller('ListController', ['$scope', '$location', 'searchService', 'cartService', function($scope, $location, searchService, cartService) {
   $scope.cds = [];
 
+   cartService.createCartId().then(function(id) {
+      currentCartId = id;
+      console.log(id);
+    });
+
+
   searchService.getRecentCds().then(function(cds) {
     $scope.cds = cds;
   });
@@ -69,12 +76,22 @@ cdApp.controller('CheckoutController', ['$scope', function($scope) {
   };
 }]);
 
-cdApp.controller('CartController', ['$scope', 'cartService', function($scope, cartService) {
+cdApp.controller('CartController', ['$scope', 'cartService', 'searchService', function($scope, cartService, searchService) {
   $scope.removeItem = removeItem;
   $scope.cdsInCart = [];
 
-  cartService.getCart().then(function(cds) {
-    $scope.cdsInCart = cds;
+  cartService.getCart().then(function(cartData) {
+    $scope.cdsInCart = [];
+    if(!cartData || cartData.products.length === 0) {
+      return;
+    }
+
+    var ids = cartData.products;
+    for (var i = ids.length - 1; i >= 0; i--) {
+      searchService.getCd(ids[i]).then(function(cd) {
+        $scope.cdsInCart.push(cd);
+      });
+    };
   });
 
   function removeItem(cd) {
@@ -148,25 +165,20 @@ cdApp.service('searchService', ['$q', function($q) {
   }
 }]);
 
-cdApp.service('cartService', ['$q', '$localStorage', function($q, $localStorage) {
+cdApp.service('cartService', ['$q', function($q) {
   
   var client = createService('c24-cdshop-cart')
-  if(!$localStorage.currentCartId) {  
-    $localStorage.$default({currentCartId: undefined});
-    createCartId().then(function(id) {
-      $localStorage.currentCartId = id;
-    });
-  }
-
+ 
   return {
     addToCart: addToCart,
     removeFromCart: removeFromCart,
-    getCart: getCart
+    getCart: getCart,
+    createCartId: createCartId
   };
 
   function removeFromCart(productId) {
     var deferred = $q.defer();
-    client.delete('/shoppingcarts/' + $localStorage.currentCartId + '/products/'+ productId, function(err, res) {
+    client.delete('/shoppingcarts/' + currentCartId + '/products/'+ productId, function(err, res) {
        if (res) {
         deferred.resolve(res.data);
        }
@@ -179,7 +191,7 @@ cdApp.service('cartService', ['$q', '$localStorage', function($q, $localStorage)
 
   function getCart() {
     var deferred = $q.defer();
-    client.post('/shoppingcarts/' + $localStorage.currentCartId, function(err, res) {
+    client.get('/shoppingcarts/' + currentCartId, function(err, res) {
        if (res) {
         deferred.resolve(res.data);
        }
@@ -192,7 +204,7 @@ cdApp.service('cartService', ['$q', '$localStorage', function($q, $localStorage)
 
   function addToCart(productId) {
     var deferred = $q.defer();
-    client.post('/shoppingcarts/' + $localStorage.currentCartId + '/products/'+ productId, function(err, res) {
+    client.post('/shoppingcarts/' + currentCartId + '/products/'+ productId, function(err, res) {
        if (res) {
         deferred.resolve(res);
        }
@@ -207,7 +219,7 @@ cdApp.service('cartService', ['$q', '$localStorage', function($q, $localStorage)
     var deferred = $q.defer();
     client.put('/shoppingcarts', function(err, res) {
       if (res) {
-        deferred.resolve(res.data.id);
+        deferred.resolve(res.data);
       }
       if (err) {
         deferred.reject(err);

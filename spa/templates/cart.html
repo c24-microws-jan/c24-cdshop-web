@@ -1,31 +1,4 @@
 <div>
- 	<div class="navbar navbar-default navbar-static-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-ex-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="/#/list"><span>Fancy CD Shop</span></a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar-ex-collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="/#/list">Home</a>
-                    </li>     
-                    <li>
-                        <a href="/#/search">Search</a>
-                    </li> 
-                    <li>
-                        <a href="/#/cart">Cart</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
     <div class="SmallCoverImage cover">
         <div class="SmallCoverImage-image cover-image" style="background-image : url('https://i.ytimg.com/vi/PmuIhhyxhko/maxresdefault.jpg')"></div>
     </div>
@@ -43,15 +16,18 @@
         <div class="container">
             <div class="row">
 				<div class="col-md-4" ng-repeat="cd in cdsInCart track by cd.id">
-					<div class="SmallProduct">
-						<img class="SmallProduct-image" ng-src="{{cd.cover.small}}">							
-						<h3 class="SmallProduct-title">{{cd.title}}</h3>
-						<p class="SmallProduct-artist">{{cd.artist}}</p>
-						<a class="SmallProduct-remove btn btn-danger btn-lg" ng-click="removeItem(cd)">
-						    <i class="fa fa-remove fa-fw"></i>
-						</a>
-						<span class="SmallProduct-price">30 €</span>
-					</div>
+                    <div class="SmallProduct">
+                        <a ng-href="/#/product/{{cd.id}}">
+                            <img class="SmallProduct-image" ng-src="{{cd.cover && cd.cover.small ? cd.cover.small : 'https://pbs.twimg.com/profile_images/425274582581264384/X3QXBN8C.jpeg'}}">
+                        </a>
+                            
+                        
+                        <h3 class="SmallProduct-title">
+                            <a ng-href="/#/product/{{cd.id}}">{{cd.name}}</a>
+                        </h3>
+                        <p class="SmallProduct-artist"><a ng-href="/#/product/{{cd.id}}">{{cd.artist}}</a></p>
+                        <span class="SmallProduct-price">30 €</span>
+                    </div>
 				</div>
             </div>
         </div>
