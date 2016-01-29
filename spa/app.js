@@ -32,11 +32,9 @@ cdApp .config(['$routeProvider',
 cdApp.controller('ListController', ['$scope', 'searchService', 'cartService', function($scope, searchService, cartService) {
   $scope.cds = [];
 
-  searchService.getRecentCds(function(cds) {
+  searchService.getRecentCds().then(function(cds) {
     $scope.cds = cds;
-    $scope.$apply();
   });
-
 }]);
 
 cdApp.controller('CheckoutController', ['$scope', function($scope) {
@@ -63,7 +61,7 @@ cdApp.controller('ProductController', ['$scope', function($scope) {
   $scope.cd = {"id":"1","title":"Mock Title","artist":"Mock Artist","cover":{"small":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-250.jpg","large":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-500.jpg"}};
 }]);
 
-cdApp.service('searchService', function() {
+cdApp.service('searchService', ['$q', function($q) {
   
   var client = createService('c24-search-service')
 
@@ -71,18 +69,21 @@ cdApp.service('searchService', function() {
     getRecentCds: getRecentCds 
   };
 
-  function getRecentCds(callback) {
+  function getRecentCds() {
+    var deferred = $q.defer();
 
-    return client.get('/cd', function(err, res) {
-      
-      //console.log(res);
-      //console.log(err);
-      callback(res.data);      
+    client.get('/cd', function(err, res) {
+      if(err) {
+        deferred.reject(err);
+      }
+      deferred.resolve(res.data);      
     });
-  }
-});
 
-cdApp.service('cartService', function() {
+    return deferred.promise;
+  }
+}]);
+
+cdApp.service('cartService', ['$q', function($q) {
   
   var client = createService('c24-cdshop-cart')
 
@@ -91,30 +92,34 @@ cdApp.service('cartService', function() {
     addToCart: addToCart
   };
 
-
-  function addToCart(cartId, productId, done, error) {
-    return client.post('/shoppingcarts/' + cartId + '/products/'+ productId, function(err, res) {
+  function addToCart(cartId, productId) {
+    var deferred = $q.defer();
+    client.post('/shoppingcarts/' + cartId + '/products/'+ productId, function(err, res) {
        if (res) {
-        done();
+        deferred.resolve(res);
        }
        if (err) {
-        error();
+        deferred.reject(err);
        }
     });    
+    return deferred.promise;
   }
 
-  function createCartId(callback) {
-
-    return client.put('/shoppingcarts', function(err, res) {
-      
-      console.log(res);
-      //console.log(err);
-      callback(res.data.id);      
+  function createCartId() {
+    var deferred = $q.defer();
+    client.put('/shoppingcarts', function(err, res) {
+      if (res) {
+        deferred.resolve(res.data.id);
+      }
+      if (err) {
+        deferred.reject(err);
+      } 
     });
+    return deferred.promise;
   }
-});
+}]);
 
-cdApp.service('checkoutService', function() {
+cdApp.service('checkoutService', ['$q', function($q) {
   
   var client = createService('c24-order-service')
 
@@ -124,42 +129,45 @@ cdApp.service('checkoutService', function() {
     getAllOrders: getAllOrders
   };
 
-
-  function createOrder(done, error) {
-    return client.post('/', function(err, res) {
-       if (res) {
-        done();
-       }
-       if (err) {
-        error();
-       }
-    });    
-  }
-
-  function getOrderDetails(id, done, error) {
-
-    return client.get('/' + id, function(err, res) {
+  function createOrder() {
+    var deferred = $q.defer();
+    client.post('/', function(err, res) {
       if (res) {
-        done();
-       }
-       if (err) {
-        error();
-       }      
-    });
+        deferred.resolve();
+      }
+      if (err) {
+        deferred.reject(err);
+      } 
+    }); 
+    return deferred.promise;   
   }
 
-  function getAllOrders(done, error) {
-
-    return client.get('/', function(err, res) {
+  function getOrderDetails(id) {
+    var deferred = $q.defer();
+    client.get('/' + id, function(err, res) {
       if (res) {
-        done();
-       }
-       if (err) {
-        error();
-       }      
+        deferred.resolve();
+      }
+      if (err) {
+        deferred.reject(err);
+      }   
     });
+    return deferred.promise; 
   }
-});
+
+  function getAllOrders() {
+    var deferred = $q.defer();
+    client.get('/', function(err, res) {
+      if (res) {
+        deferred.resolve();
+      }
+      if (err) {
+        deferred.reject(err);
+      }        
+    });
+    return deferred.promise;
+  }
+}]);
 
 function createService(serviceName) {
     var client = resilient();
