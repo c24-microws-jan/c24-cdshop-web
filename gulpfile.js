@@ -95,7 +95,7 @@ gulp.task('deploy', function (done) {
 });
 
 gulp.task('ci', function (done) {
-  runSequence.apply(null, options.versionTag ? ['test', 'build', 'push', 'deploy', done] : ['test', 'build', done]);
+  runSequence.apply(null, options.versionTag ? ['test', 'html', 'copy:templates', 'build', 'push', 'deploy', done] : ['test', 'html', 'copy:templates', 'build', done]);
 });
 
 gulp.task('default', ['html', 'copy:templates', 'watch'], function () {});
