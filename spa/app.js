@@ -30,8 +30,11 @@ cdApp .config(['$routeProvider',
   }]);
 
 cdApp.controller('ListController', ['$scope', 'searchService', function($scope, searchService) {
+  $scope.cds = [];
+
   searchService.getRecentCds(function(cds) {
     $scope.cds = cds;
+    $scope.$apply();
   })
 }]);
 
