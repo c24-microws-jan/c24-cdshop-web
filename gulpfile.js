@@ -11,6 +11,7 @@ const pkg = require('./package.json');
 const spa = require("gulp-spa");
 //var rev = require('gulp-rev');
 var htmlmin = require('gulp-htmlmin');
+var gulpCopy = require('gulp-copy');
 var uglify = require('gulp-uglify');
 var minifyCss = require('gulp-minify-css');
 var concat = require('gulp-concat');
@@ -28,6 +29,10 @@ const options = {
 }
 
 let server;
+
+gulp.task('copy:templates', function() {
+  return gulp.src(['spa/templates/**/*']).pipe(gulp.dest('public/templates'));
+});
 
 gulp.task("html", function () {
     return gulp.src("./spa/index.html")
@@ -66,7 +71,7 @@ gulp.task('serve', function (done) {
 });
 
 gulp.task('watch', ['serve'], function () {
-  gulp.watch(['**/*.js', '!node_modules/**', '!gulpfile.js'], ['test', 'serve']);
+  gulp.watch(['**/*.js', 'spa/**/*.*', '!node_modules/**', '!gulpfile.js'], ['test', 'serve']);
 });
 
 gulp.task('build', shell.task([
@@ -93,4 +98,4 @@ gulp.task('ci', function (done) {
   runSequence.apply(null, options.versionTag ? ['test', 'build', 'push', 'deploy', done] : ['test', 'build', done]);
 });
 
-gulp.task('default', ['watch'], function () {});
+gulp.task('default', ['html', 'copy:templates', 'watch'], function () {});

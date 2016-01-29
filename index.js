@@ -16,6 +16,7 @@ app.use(bodyParser.json());
 
 // Add CORS headers
 app.use(cors());
+app.use(express.static(path.join(__dirname, '/public')));
 
 // Add health check endpoint
 app.get(SERVICE_CHECK_HTTP, function (req, res) {
@@ -25,7 +26,7 @@ app.get(SERVICE_CHECK_HTTP, function (req, res) {
 // Add all other service routes
 app.get('/', function (req, res) {
   console.log('GET /');
-  res.sendFile(path.join(__dirname + '/public/index.html'));
+  res.sendFile(path.join(__dirname, '/public/index.html'));
 });
 
 app.post('/', function (req, res) {

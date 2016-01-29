@@ -1,6 +1,8 @@
 'use strict';
 
-var cdApp = angular.module('cdapp', []);
+var cdApp = angular.module('cdapp', [
+  'ngRoute'
+  ]);
   
 cdApp .config(['$routeProvider',
   function($routeProvider) {
@@ -14,6 +16,6 @@ cdApp .config(['$routeProvider',
       });
   }]);
 
-cdApp.controller('ListController', function($scope) {
+cdApp.controller('ListController', ['$scope', function($scope) {
      
-});
+}]);
