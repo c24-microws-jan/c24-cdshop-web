@@ -71,7 +71,7 @@ gulp.task('serve', function (done) {
 });
 
 gulp.task('watch', ['serve'], function () {
-  gulp.watch(['**/*.js', 'spa/**/*.*', '!node_modules/**', '!gulpfile.js'], ['test', 'serve']);
+  gulp.watch(['**/*.js', 'spa/**/*.*', '!node_modules/**', '!gulpfile.js'], ['test', 'html', 'copy:templates', 'serve']);
 });
 
 gulp.task('build', shell.task([

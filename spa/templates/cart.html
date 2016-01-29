@@ -1,0 +1,63 @@
+<div>
+ 	<div class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-ex-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/#/list"><span>Fancy CD Shop</span></a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-ex-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/#/list">Home</a>
+                    </li>     
+                    <li>
+                        <a href="/#/cart">Cart</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>You have {{cds.length}} items in your cart<a href="/#/checkout" class="pull-right btn btn-lg btn-primary">Buy {{cds.length}} items</a></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <div class="row">
+				<div class="col-md-4" ng-repeat="cd in cds track by cd.id">
+					<div class="SmallProduct">
+						<img class="SmallProduct-image" ng-src="{{cd.cover.small}}">							
+						<h3 class="SmallProduct-title">{{cd.title}}</h3>
+						<p class="SmallProduct-artist">{{cd.artist}}</p>
+						<a class="SmallProduct-remove btn btn-danger btn-lg" ng-click="removeItem(cd)">
+						    <i class="fa fa-remove fa-fw"></i>
+						</a>
+						<span class="SmallProduct-price">30 €</span>
+					</div>
+				</div>
+            </div>
+        </div>
+    </div>
+
+     <div class="section">
+        <div class="container">
+            <div class="row">
+				<div class="col-md-12">
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>

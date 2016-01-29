@@ -1,0 +1,37 @@
+
+
+.SmallProduct {
+	position: relative;
+	padding: 5%;
+	margin-bottom: 20px;
+	background-color: #DCDCDC;
+}
+
+.SmallProduct-remove  {
+	position: absolute;
+	top: -4px;
+	right: 0;
+}
+
+.SmallProduct-image {
+	display: block;
+	margin: 0 auto;
+}
+
+.SmallProduct-title {
+	display: block;
+}
+
+.SmallProduct-artist {
+	display: block;
+}
+
+.SmallProduct-price {
+	display: inline;
+	position: absolute;
+	background-color: #98FF77;
+	padding: 10px;
+	font-size: 14px;
+	top: -4px;
+	left: 0;
+}

@@ -1,1 +1,41 @@
-<h1>Hello From web site team </h1>
+<div>
+    <div class="cover">
+        <div class="cover-image" style="background-image : url('https://i.ytimg.com/vi/PmuIhhyxhko/maxresdefault.jpg')"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h1 class="text-inverse">Welcome</h1>
+                    <p class="text-inverse">You can find, collect and buy your favourite CDs from all over the world</p>
+                    <br>
+                    <br>
+                    <a class="btn btn-lg btn-primary">Check it out...</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Our recent products in our store</h1></div>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <div class="row">
+				<div class="col-md-4" ng-repeat="cd in cds track by cd.id">
+					<div class="SmallProduct">
+					<a ng-href="/#/product/{{cd.id}}">
+						<img class="SmallProduct-image" ng-src="{{cd.cover.small}}">
+					</a>
+						
+					<h3 class="SmallProduct-title">{{cd.title}}</h3>
+					<p class="SmallProduct-artist">{{cd.artist}}</p>
+					<span class="SmallProduct-price">30 €</span>
+					</div>
+				</div>
+            </div>
+        </div>
+    </div>
+</div>
