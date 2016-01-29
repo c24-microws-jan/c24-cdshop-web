@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const path = require('path');
 
 // Define some default values if not set in environment
 const PORT = process.env.PORT || 3000;
@@ -24,7 +25,7 @@ app.get(SERVICE_CHECK_HTTP, function (req, res) {
 // Add all other service routes
 app.get('/', function (req, res) {
   console.log('GET /');
-  res.send('Hello from the website team!');
+  res.sendFile(path.join(__dirname + '/public/index.html'));
 });
 
 app.post('/', function (req, res) {
