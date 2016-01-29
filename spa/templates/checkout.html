@@ -1,2 +1,29 @@
-<div>
+ <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12" ng-if="!orderId">
+					 <form class="form-horizontal" role="form" >
+					 	<div class="form-group">
+					 		<h2>Total price: {{totalPrice}}</h2>
+					 		<h3>Total cds: {{totalProducts}}</h3>
+					 	</div>
+					    <div class="form-group">
+					        <div class="col-sm-2">
+					            <label for="inputEmail3" class="control-label">Email</label>
+					        </div>
+					        <div class="col-sm-8">
+					            <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+					        </div>
+					        <div class="col-sm-2">
+					        	<a class="btn btn-lg btn-primary" ng-click="submitOrder()">Submit order</a>
+					        </div>
+					    </div>
+					    
+					</form>
+				</div>
+				<div class="col-md-12" ng-if="orderId">
+					<h1>Thank you for your order! Your ID is : {{orderId}}</h1>
+				</div>
+			</div>
+		</div>
 </div>
