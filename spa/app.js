@@ -2,7 +2,8 @@
 
 
 var cdApp = angular.module('cdapp', [
-  'ngRoute'
+  'ngRoute',
+  'ngStorage'
   ]);
   
 cdApp .config(['$routeProvider',
@@ -12,7 +13,7 @@ cdApp .config(['$routeProvider',
         templateUrl: 'templates/list.html',
         controller: 'ListController'
       }).
-      when('/product/:record', {
+      when('/product/:id', {
         templateUrl: 'templates/product.html',
         controller: 'ProductController'
       }).      
@@ -41,21 +42,35 @@ cdApp.controller('CheckoutController', ['$scope', function($scope) {
   $scope.cds = [{"id":1,"title":"Mock Title1","artist":"Mock Artist","cover":{"small":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-250.jpg","large":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-500.jpg"}},{"id":2,"title":"Mock Title2","artist":"Mock Artist","cover":{"small":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-250.jpg","large":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-500.jpg"}},{"id":3,"title":"Mock Title3","artist":"Mock Artist","cover":{"small":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-250.jpg","large":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-500.jpg"}},{"id":4,"title":"Mock Title4","artist":"Mock Artist","cover":{"small":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-250.jpg","large":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-500.jpg"}}];
 }]);
 
-cdApp.controller('CartController', ['$scope', function($scope) {
+cdApp.controller('CartController', ['$scope', 'cartService', function($scope, cartService) {
   $scope.removeItem = removeItem;
-  $scope.cds = [{"id":1,"title":"Mock Title1","artist":"Mock Artist","cover":{"small":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-250.jpg","large":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-500.jpg"}},{"id":2,"title":"Mock Title2","artist":"Mock Artist","cover":{"small":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-250.jpg","large":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-500.jpg"}},{"id":3,"title":"Mock Title3","artist":"Mock Artist","cover":{"small":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-250.jpg","large":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-500.jpg"}},{"id":4,"title":"Mock Title4","artist":"Mock Artist","cover":{"small":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-250.jpg","large":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-500.jpg"}}];
+  $scope.cdsInCart = [];
+
+  cartService.getCart().then(function(cds) {
+    $scope.cdsInCart = cds;
+  });
 
   function removeItem(cd) {
     var index =  $scope.cds.indexOf(cd);
     if (index > -1) {
       $scope.cds.splice(index, 1);
     }
+    return cartService.removeFromCart(cd.id);
   }
 
 }]);
 
-cdApp.controller('ProductController', ['$scope', function($scope) {
-  $scope.cd = {"id":"1","title":"Mock Title","artist":"Mock Artist","cover":{"small":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-250.jpg","large":"http://coverartarchive.org/release/76df3287-6cda-33eb-8e9a-044b5e15ffdd/829521842-500.jpg"}};
+cdApp.controller('ProductController', ['$scope', '$routeParams', 'searchService', 'cartService', function($scope, $routeParams, searchService, cartService) {
+  
+  $scope.addToCart = addToCart;
+
+  searchService.getCd($routeParams.id).then(function(cd) {
+    $scope.cd = cd;
+  });
+
+  function addToCart() {
+    return cartService.addToCart($routeParams.id);
+  }
 }]);
 
 cdApp.service('searchService', ['$q', function($q) {
@@ -63,9 +78,22 @@ cdApp.service('searchService', ['$q', function($q) {
   var client = createService('c24-search-service')
 
   return {
-    getRecentCds: getRecentCds 
+    getRecentCds: getRecentCds,
+    getCd: getCd,
   };
 
+  function getCd(id) {
+    var deferred = $q.defer();
+
+    client.get('/cd/' + id, function(err, res) {
+      if(err) {
+        deferred.reject(err);
+      }
+      deferred.resolve(res.data);      
+    });
+
+    return deferred.promise;
+  }
   function getRecentCds() {
     var deferred = $q.defer();
 
@@ -80,18 +108,51 @@ cdApp.service('searchService', ['$q', function($q) {
   }
 }]);
 
-cdApp.service('cartService', ['$q', function($q) {
+cdApp.service('cartService', ['$q', '$localStorage', function($q, $localStorage) {
   
   var client = createService('c24-cdshop-cart')
+  if(!$localStorage.currentCartId) {  
+    $localStorage.$default({currentCartId: undefined});
+    createCartId().then(function(id) {
+      $localStorage.currentCartId = id;
+    });
+  }
 
   return {
-    createCartId: createCartId,
-    addToCart: addToCart
+    addToCart: addToCart,
+    removeFromCart: removeFromCart,
+    getCart: getCart
   };
 
-  function addToCart(cartId, productId) {
+  function removeFromCart(productId) {
     var deferred = $q.defer();
-    client.post('/shoppingcarts/' + cartId + '/products/'+ productId, function(err, res) {
+    client.delete('/shoppingcarts/' + $localStorage.currentCartId + '/products/'+ productId, function(err, res) {
+       if (res) {
+        deferred.resolve(res.data);
+       }
+       if (err) {
+        deferred.reject(err);
+       }
+    });    
+    return deferred.promise;
+  }
+
+  function getCart() {
+    var deferred = $q.defer();
+    client.post('/shoppingcarts/' + $localStorage.currentCartId, function(err, res) {
+       if (res) {
+        deferred.resolve(res.data);
+       }
+       if (err) {
+        deferred.reject(err);
+       }
+    });    
+    return deferred.promise;
+  }
+
+  function addToCart(productId) {
+    var deferred = $q.defer();
+    client.post('/shoppingcarts/' + $localStorage.currentCartId + '/products/'+ productId, function(err, res) {
        if (res) {
         deferred.resolve(res);
        }
