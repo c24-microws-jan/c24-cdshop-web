@@ -35,3 +35,13 @@
 	top: -4px;
 	left: 0;
 }
+
+.CustomSearchInput {
+    width: 40%;
+    margin: 0 auto;
+ }
+
+ .CustomSearchInput-button {
+    height: 47px;
+    margin-left: 0;
+ }
