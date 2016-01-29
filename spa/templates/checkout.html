@@ -1,2 +1,35 @@
-<div>
+ <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+					 <form class="form-horizontal" role="form">
+					 	<div class="form-group">
+					 		<div class="col-md-4" ng-repeat="cd in cds track by cd.id">
+								<div class="SmallProduct">
+									<a ng-href="/#/product/{{cd.id}}">
+										<img class="SmallProduct-image" ng-src="{{cd.cover.small}}">
+									</a>
+										
+									<h3 class="SmallProduct-title">{{cd.title}}</h3>
+									<p class="SmallProduct-artist">{{cd.artist}}</p>
+									<span class="SmallProduct-price">30 €</span>
+								</div>
+							</div>
+					 	</div>
+					    <div class="form-group">
+					        <div class="col-sm-2">
+					            <label for="inputEmail3" class="control-label">Email</label>
+					        </div>
+					        <div class="col-sm-8">
+					            <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+					        </div>
+					        <div class="col-sm-2">
+					        	<a class="btn btn-lg btn-primary">Submit order</a>
+					        </div>
+					    </div>
+					    
+					</form>
+				</div>
+			</div>
+		</div>
 </div>
