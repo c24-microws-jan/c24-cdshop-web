@@ -24,16 +24,33 @@ cdApp .config(['$routeProvider',
       when('/checkout', {
         templateUrl: 'templates/checkout.html',
         controller: 'CheckoutController'
+      }).      
+      when('/search/:query', {
+        templateUrl: 'templates/search.html',
+        controller: 'SearchController'
+      }). 
+      when('/search', {
+        templateUrl: 'templates/search.html',
+        controller: 'SearchController'
       }).
       otherwise({
         redirectTo: '/list'
       });
   }]);
 
-cdApp.controller('ListController', ['$scope', 'searchService', 'cartService', function($scope, searchService, cartService) {
+cdApp.controller('ListController', ['$scope', '$location', 'searchService', 'cartService', function($scope, $location, searchService, cartService) {
   $scope.cds = [];
 
   searchService.getRecentCds().then(function(cds) {
+    $scope.cds = cds;
+  });
+}]);
+
+cdApp.controller('SearchController', ['$scope', '$routeParams', 'searchService', function($scope, $routeParams, searchService) {
+  $scope.cds = [];
+  $scope.searchText = $routeParams.query;
+
+  searchService.search($routeParams.query).then(function(cds) {
     $scope.cds = cds;
   });
 }]);
@@ -74,13 +91,26 @@ cdApp.controller('ProductController', ['$scope', '$routeParams', 'searchService'
 }]);
 
 cdApp.service('searchService', ['$q', function($q) {
-  
   var client = createService('c24-search-service')
 
   return {
     getRecentCds: getRecentCds,
     getCd: getCd,
+    search: search
   };
+
+  function search(query) {
+    var deferred = $q.defer();
+
+    client.get('/cd/?query=' + query, function(err, res) {
+      if(err) {
+        deferred.reject(err);
+      }
+      deferred.resolve(res.data);      
+    });
+
+    return deferred.promise;
+  }
 
   function getCd(id) {
     var deferred = $q.defer();
