@@ -1,6 +1,6 @@
 {
   "name": "c24-cdshop-web",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This is our workshop website",
   "author": "",
   "license": "MIT",
@@ -20,7 +20,8 @@
   "dependencies": {
     "body-parser": "~1.14.2",
     "cors": "~2.7.1",
-    "express": "~4.13.4"
+    "express": "~4.13.4",
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "gulp": "~3.9.0",
