@@ -111,6 +111,53 @@ cdApp.service('cartService', function() {
   }
 });
 
+cdApp.service('checkoutService', function() {
+  
+  var client = createService('c24-order-service')
+
+  return {
+    createOrder: createOrder,
+    getOrderDetails: getOrderDetails,
+    getAllOrders: getAllOrders
+  };
+
+
+  function createOrder(done, error) {
+    return client.post('/', function(err, res) {
+       if (res) {
+        done();
+       }
+       if (err) {
+        error();
+       }
+    });    
+  }
+
+  function getOrderDetails(id, done, error) {
+
+    return client.get('/' + id, function(err, res) {
+      if (res) {
+        done();
+       }
+       if (err) {
+        error();
+       }      
+    });
+  }
+
+  function getAllOrders(done, error) {
+
+    return client.get('/', function(err, res) {
+      if (res) {
+        done();
+       }
+       if (err) {
+        error();
+       }      
+    });
+  }
+});
+
 function createService(serviceName) {
     var client = resilient();
 
