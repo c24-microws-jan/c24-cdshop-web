@@ -1,4 +1,11 @@
+.SmallCoverImage {
+	height: 200px !important;
+	min-height: 200px !important;
+}
 
+.SmallCoverImage-image {
+	min-height: 200px !important;
+}
 
 .SmallProduct {
 	position: relative;
